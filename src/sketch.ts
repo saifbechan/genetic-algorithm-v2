@@ -1,12 +1,26 @@
+import Ant from './Entities/Ant';
 import Lemon from './Entities/Lemon';
 import P5, { Image } from 'p5';
+import populate from './Functions/populate';
+
+enum Population {
+  // the number of ants per generation
+  Size = 10,
+
+  // how long does a generation last
+  Lifespan = 250,
+}
 
 const sketch = (p5: P5): void => {
   // map that holds the images
   const images: Map<string, Image> = new Map();
+  const sprites: Map<string, Image[]> = new Map();
 
   // the lemon where ants are attracted to
   let lemon: Lemon;
+
+  // our population of ants
+  let ants: Ant[];
 
   // the draw function gets called every frame forever
   p5.draw = (): void => {
@@ -14,7 +28,15 @@ const sketch = (p5: P5): void => {
     p5.clear(0, 0, 0, 0);
 
     // make sure our objects are created before drawing
-    if (!lemon) return;
+    if (!lemon || !ants) return;
+
+    // draw the ants
+    ants.forEach((ant) => {
+      // update the position of the ant
+      ant.update(lemon);
+      // draw the ant
+      ant.draw();
+    });
 
     // draw the lemon
     lemon.draw();
@@ -26,8 +48,21 @@ const sketch = (p5: P5): void => {
     canvas.style('margin', '0 auto');
     canvas.attribute('role', 'sketch');
 
+    const image: Image = images.get('ant') as Image;
+    image.loadPixels();
+
+    const sprite: Image[] = [];
+    sprite.push(image.get(1, 0, 96, 101));
+    sprite.push(image.get(97, 0, 96, 101));
+    sprite.push(image.get(193, 0, 96, 101));
+    sprite.push(image.get(289, 0, 97, 101));
+    sprites.set('ants', sprite);
+
     // create the lemon
     lemon = new Lemon(p5, images.get('lemon') as Image);
+
+    // create the ants
+    ants = populate(p5, Population.Size, Population.Lifespan, sprite);
   };
 
   p5.preload = (): void => {
@@ -36,6 +71,9 @@ const sketch = (p5: P5): void => {
 
     // load the lemon image
     images.set('lemon', p5.loadImage('images/lemon.png'));
+
+    // load the ant sprite
+    images.set('ant', p5.loadImage('images/ant.png'));
   };
 
   p5.windowResized = (): void => {

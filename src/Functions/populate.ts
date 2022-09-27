@@ -2,6 +2,7 @@ import { sampleSize } from 'lodash';
 import Ant from '../Entities/Ant';
 import P5, { Image } from 'p5';
 import mating from './dna/mating';
+import mutate from './mutate';
 import random from './dna/random';
 
 const populate = (
@@ -23,8 +24,11 @@ const populate = (
     const dna =
       parents.length === 2 ? mating(lifespan, parents) : random(p5, lifespan);
 
+    // mutate the dna
+    const mutated = mutate(p5, dna);
+
     // create a new ant
-    const ant = new Ant(p5, dna, sprites);
+    const ant = new Ant(p5, mutated, sprites);
 
     // add our ant to the population
     ants.push(ant);

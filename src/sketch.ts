@@ -22,6 +22,9 @@ const sketch = (p5: P5): void => {
   // our population of ants
   let ants: Ant[];
 
+  // the current step (frame) we are in
+  let step = 0;
+
   // the draw function gets called every frame forever
   p5.draw = (): void => {
     // clear the canvas
@@ -30,16 +33,28 @@ const sketch = (p5: P5): void => {
     // make sure our objects are created before drawing
     if (!lemon || !ants) return;
 
-    // draw the ants
-    ants.forEach((ant) => {
-      // update the position of the ant
-      ant.update(lemon);
-      // draw the ant
-      ant.draw();
-    });
+    // we draw when the step is smaller than the lifespan
+    if (step < Population.Lifespan) {
+      // draw the ants
+      ants.forEach((ant) => {
+        // update the position of the ant
+        ant.update(lemon);
+        // draw the ant
+        ant.draw();
+      });
 
-    // draw the lemon
-    lemon.draw();
+      // draw the lemon
+      lemon.draw();
+
+      // increase the steps
+      step += 1;
+    } else {
+      // create a new population based on the old one
+      ants = populate(p5, Population.Size, Population.Lifespan, sprites.get('ants') as Image[]);
+
+      // reset the steps
+      step = 0;
+    }
   };
 
   p5.setup = (): void => {

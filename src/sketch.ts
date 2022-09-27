@@ -1,14 +1,15 @@
 import Ant from './Entities/Ant';
 import Lemon from './Entities/Lemon';
 import P5, { Image } from 'p5';
+import evaluate from './Functions/evaluate';
 import populate from './Functions/populate';
 
 enum Population {
   // the number of ants per generation
-  Size = 10,
+  Size = 50,
 
   // how long does a generation last
-  Lifespan = 250,
+  Lifespan = 500,
 }
 
 const sketch = (p5: P5): void => {
@@ -49,8 +50,17 @@ const sketch = (p5: P5): void => {
       // increase the steps
       step += 1;
     } else {
+      // create a pool of evaluated ants
+      const pool: Ant[] = evaluate(p5, ants);
+
       // create a new population based on the old one
-      ants = populate(p5, Population.Size, Population.Lifespan, sprites.get('ants') as Image[]);
+      ants = populate(
+        p5,
+        Population.Size,
+        Population.Lifespan,
+        sprites.get('ants') as Image[],
+        pool
+      );
 
       // reset the steps
       step = 0;
@@ -77,7 +87,7 @@ const sketch = (p5: P5): void => {
     lemon = new Lemon(p5, images.get('lemon') as Image);
 
     // create the ants
-    ants = populate(p5, Population.Size, Population.Lifespan, sprite);
+    ants = populate(p5, Population.Size, Population.Lifespan, sprite, []);
   };
 
   p5.preload = (): void => {

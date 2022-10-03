@@ -1,0 +1,11 @@
+html,
+body {
+  background-image: url('/images/back.png');
+  background-size: cover;
+  margin: 0;
+  padding: 0;
+}
+
+#sketch {
+  text-align: center;
+}

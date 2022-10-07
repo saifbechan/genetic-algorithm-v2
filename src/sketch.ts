@@ -1,6 +1,7 @@
 import Ant from './Entities/Ant';
 import Lemon from './Entities/Lemon';
 import P5, { Image } from 'p5';
+import Virus from './Entities/Virus';
 import evaluate from './Functions/evaluate';
 import populate from './Functions/populate';
 
@@ -23,6 +24,9 @@ const sketch = (p5: P5): void => {
   // our population of ants
   let ants: Ant[];
 
+  // viruses to avoid
+  let viruses: Virus[];
+
   // the current step (frame) we are in
   let step = 0;
 
@@ -39,13 +43,19 @@ const sketch = (p5: P5): void => {
       // draw the ants
       ants.forEach((ant) => {
         // update the position of the ant
-        ant.update(lemon);
+        ant.update(lemon, viruses);
         // draw the ant
         ant.draw();
       });
 
       // draw the lemon
       lemon.draw();
+
+      // draw the viruses
+      viruses.forEach((virus) => {
+        // draw the virus
+        virus.draw();
+      });
 
       // increase the steps
       step += 1;
@@ -88,6 +98,9 @@ const sketch = (p5: P5): void => {
 
     // create the ants
     ants = populate(p5, Population.Size, Population.Lifespan, sprite, []);
+
+    // create the virus
+    viruses = [new Virus(p5, 1), new Virus(p5, 3), new Virus(p5, 5)];
   };
 
   p5.preload = (): void => {
